@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>实景虚拟展品合成器 · 空间音画视窗</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <h1>实景虚拟展品合成器</h1>
+  <p class="sub">颜色+深度标定帧 · 同一坐标系深度比较 · 真实前景遮挡 · 边缘配准诊断</p>
+</header>
+
+<main>
+  <section class="viewport" id="viewport">
+    <div class="viewport-bar">
+      <div class="view-switch" id="viewSwitch">
+        <button data-view="composite" class="active">最终合成</button>
+        <button data-view="depth">配准深度</button>
+        <button data-view="mask">有效掩码</button>
+        <button data-view="edge">边缘诊断</button>
+        <button data-view="gt">参考真值</button>
+        <button data-view="real">纯实景</button>
+      </div>
+      <div class="audio">
+        <button id="audioToggle" type="button">开启空间音频</button>
+        <span id="audioState" class="muted">音频关闭（默认静音）</span>
+      </div>
+    </div>
+    <div class="stage">
+      <img id="mainImage" alt="合成视窗" src="/api/image?view=composite">
+      <div id="errorBanner" class="error-banner hidden"></div>
+      <div id="missingBadge" class="missing-badge hidden">橙色斜纹＝实景深度缺测区，遮挡结论不可靠</div>
+    </div>
+    <div class="scrub">
+      <label>相机轨迹帧
+        <input type="range" id="frameSlider" min="0" max="0" step="1" value="0">
+      </label>
+      <span id="frameLabel">帧 0</span>
+      <button id="playBtn" type="button">播放轨迹</button>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <h2>虚拟展品控制</h2>
+    <p class="hint">控件范围与拒绝逻辑由实景遮挡内核 <code>MOVE_LIMITS</code> 决定。</p>
+    <div class="control">
+      <label>X 横向偏移 <span id="oxVal">0</span> mm</label>
+      <input type="range" id="ox" min="-700" max="700" step="10" value="0">
+    </div>
+    <div class="control">
+      <label>Y 高度偏移 <span id="oyVal">0</span> mm</label>
+      <input type="range" id="oy" min="-200" max="400" step="10" value="0">
+    </div>
+    <div class="control">
+      <label>Z 纵深偏移 <span id="ozVal">0</span> mm</label>
+      <input type="range" id="oz" min="-300" max="900" step="10" value="0">
+    </div>
+    <div class="control">
+      <label>深度判定容差 <span id="biasVal">10</span> mm</label>
+      <input type="range" id="bias" min="0" max="60" step="1" value="10">
+    </div>
+    <label class="check"><input type="checkbox" id="missingWarn" checked>
+      高亮实景深度缺测区（不隐藏缺测错误）</label>
+    <button id="resetBtn" type="button">回到参考位姿</button>
+    <button id="gtCheckBtn" type="button">核对参考位姿真值合成</button>
+    <div id="gtCheck" class="gt-check hidden"></div>
+
+    <h2>深度关系（像素计数）</h2>
+    <table id="relationTable">
+      <thead><tr><th>关系</th><th>像素</th><th>含义</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <h2>合成统计</h2>
+    <dl id="statsList" class="stats"></dl>
+
+    <h2>边缘配准诊断</h2>
+    <dl id="edgeList" class="stats"></dl>
+
+    <h2>内核消息</h2>
+    <ul id="warningList" class="warnings"></ul>
+  </aside>
+</main>
+
+<footer>
+  <span>近裁剪 <b id="nearFoot">-</b> mm · 远裁剪 <b id="farFoot">-</b> mm ·
+    深度无效值 <b id="invalidFoot">-</b> · 单位 毫米（沿光轴 Z）</span>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>
