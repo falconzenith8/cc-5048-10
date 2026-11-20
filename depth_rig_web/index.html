@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>深度测试相机 · 薄板扫动回放</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <h1>深度测试相机 · 带孔薄板横向扫过虚拟展品</h1>
+  <p class="sub">真实颜色 / 延后一帧深度 / 有效位 · 独立射线给出遮挡区、孔内可见区与边缘不确定带 ·
+    断言直接读取最终显示用合成缓冲</p>
+</header>
+
+<main>
+  <section class="stage">
+    <div class="canvas-wrap">
+      <canvas id="mainCanvas" width="480" height="384"></canvas>
+      <div id="errorBanner" class="banner hidden"></div>
+    </div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <aside class="panel">
+    <h2>回放控制</h2>
+    <label>故障预设
+      <select id="preset"></select>
+    </label>
+
+    <label>帧 <span id="frameVal"></span>
+      <input type="range" id="frame" min="0" max="35" value="12">
+    </label>
+    <div class="row">
+      <button data-speed="fast" class="speed-btn active">快速 18mm/帧</button>
+      <button data-speed="slow" class="speed-btn">拖慢 3.75mm/帧</button>
+      <button data-speed="still" class="speed-btn">静止 0</button>
+    </div>
+
+    <label>板平面距离 z <span id="plateZVal"></span> mm
+      <input type="range" id="plateZ" min="300" max="700" step="10" value="400">
+    </label>
+    <label>前序时间戳数量 <span id="historyVal"></span>
+      <input type="range" id="history" min="0" max="5" value="2">
+    </label>
+
+    <div class="row">
+      <label class="check"><input type="checkbox" id="showFailure" checked> 叠加失败区（红）</label>
+      <label class="check"><input type="checkbox" id="showRegion"> 区域轮廓</label>
+    </div>
+
+    <h2>当前帧信息</h2>
+    <dl id="frameInfo"></dl>
+    <h2>显示缓冲状态统计</h2>
+    <dl id="statsList"></dl>
+
+    <button id="regressionBtn">运行回归套件（断言最终显示缓冲）</button>
+    <div id="regressionBox" class="regression"></div>
+  </aside>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
